@@ -1,0 +1,17 @@
+NEED TO DO:
+
+    ADD HOME SCREEN:
+        New game button
+        Catagory picker drop down menu
+
+    MAKE KEYS CLICKABLE
+
+    HANGMAN FACIAL
+
+
+DONE:
+    Hangman needs to stay on screen.
+    FIX END SCREEN:
+    Need new game button.
+    Need "You Won!" screen.
+    REPEAT BUTTON CLICKS SHOULD NOT ADD TO SCORE

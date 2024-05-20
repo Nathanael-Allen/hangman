@@ -1,20 +1,43 @@
 const keyChars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 const wordsArray = ['TWILIGHT', 'HANGMAN', 'BRIDGERTON', 'ECLIPSE', 'NEW MOON', 'HOMOSEXUAL']
 
+function createNewGameButton(){
+    let button = $(`<button id="new-game-button">New Game</button>`)
+    return button;
+}
 
 function clearPage(){
-    let mainContent = Array.from(document.getElementsByTagName('main')[0].childNodes);
+    $('.hidden-letter').remove();
+    let mainContent = Array.from(document.getElementsByClassName('col2'));
 
     mainContent.forEach((element)=>{
         element.remove();
     });
+
+}
+
+function createStartPage(){
+    drawHangman();
+    let button = createNewGameButton();
+    let main = $(`
+    <div class="main-screen-text col2">
+        <p>HANGMAN<p>
+    </div>`);
+    main.append(button)
+    $('main').append(main);
+    $('#new-game-button').on('click', ()=>{
+        clearPage();
+        generateGame();
+    })
 }
 
 function drawHangman(){
+    let height = 300;
+    let width = 200;
+    let hangman = $(`<div id="canvasDiv" class="col1"><canvas id="hangmanCanvas" height="${height}" width="${width}"></canvas></div>`);
+    $('main').append(hangman);
     let canvas = document.getElementById("hangmanCanvas");
     let c = canvas.getContext('2d');
-    // let height = 300;
-    // let width = 200;
 
     c.lineWidth = 5;
     c.strokeStyle = 'rgb(255 255 255)';
@@ -103,76 +126,91 @@ function populateHiddenWords(words){
     };
 };
 
-function checkLetterInArray(array, letter, score, scoreBox){
-
-};
-
-function showEndScreen(wl){
-    let textDiv = $(`<div class="end-screen-text"></div>`)
+function showEndScreen(wl, hiddenWord){
+    clearPage();
+    let textDiv = $(`<div class="main-screen-text col2"></div>`)
     let text;
+    let word = `<p class="end-screen-answer">The answer was: ${hiddenWord}</p>`;
+    let button = createNewGameButton();
 
     if(wl === 'LOST'){
         text = $('<p>YOU</p><p>LOST</p>');
-        textDiv.append(text);
+        textDiv.append(text, word, button);
     }else if(wl === 'WON'){
         text = $('<p>YOU</p><p>WON</p>');
-        textDiv.append(text);
+        textDiv.append(text, word, button);
     }
     $('main').append(textDiv);
+    $('#new-game-button').on('click', ()=>{
+        $('canvas').remove();
+        drawHangman();
+        clearPage();
+        generateGame();
+    })
 }
 
 function buildDivs(){
-    let height = 300;
-    let width = 200;
-    let hangman = $(`<div id="canvasDiv" class="col1"><canvas id="hangmanCanvas" height="${height}" width="${width}"></canvas></div>`)
     let hiddenDiv = $(`<div class="col2" id="hidden-word-div"></div`)
     let keyboardDiv = $(`<div class="col2" id="keyboard-div">`)
 
-    $('main').append(hangman, hiddenDiv, keyboardDiv);
+    $('main').append(hiddenDiv, keyboardDiv);
 }
 function generateGame(){
     buildDivs();
+    let usedLetters = [];
+    let correct;
+    let keyPressed;
     let score = 0;
+    let numCorrect = 0;
     drawHangman();
-    // addBodyParts(score);
     let randomNum = Math.floor(Math.random() * wordsArray.length);
     let hiddenWords = wordsArray[randomNum].split(' ');
+    console.log("new word: " + hiddenWords)
 
     populateHiddenWords(hiddenWords);
     populateKeys(keyChars);
     let virtualKeys = Array.from($('.letter-button'));
     let hiddenLetters = Array.from($('.hidden-letter'));
-    document.addEventListener('keydown', (e)=>{
-        let keyPressed = e.key.toUpperCase();
-        let correct = false;
+    let handlerFunction = function(e){
+        keyPressed = e.key.toUpperCase();
+        correct = false;
 
         virtualKeys.forEach((item)=>{
             if(keyPressed === item.textContent){
                 item.style.backgroundColor = 'black';
-                item.style.color = 'rgba(255, 255, 255, .5)'
+                item.style.color = 'rgba(255, 255, 255, .5)';
             };
         });
-        hiddenLetters.forEach((letter)=>{
-            if(keyPressed === letter.textContent){
-                letter.firstElementChild.style.display = 'block';
-                correct = true;
-            }
-        });
-        if(hiddenLetters.indexOf(letter) === -1 && keyChars.indexOf(keyPressed) >= 0 && correct == false){
-            score++;
-            addBodyParts(score);
-            // scoreBox.innerText = `${score}/6`;
-            if(score === 7){
-                clearPage();
-                showEndScreen('LOST');
-            }
-        };
-        console.log(score)
-    });
+        if(usedLetters.indexOf(keyPressed) === -1){
+            hiddenLetters.forEach((letter)=>{
+                if(keyPressed === letter.textContent){
+                    letter.firstElementChild.style.display = 'block';
+                    correct = true;
+                    numCorrect++;
+                    usedLetters.push(keyPressed);
+                    if(numCorrect === hiddenLetters.length){
+                        showEndScreen('WON', hiddenWords);
+                        document.removeEventListener('keydown', handlerFunction);
+                    };
+                }
+            });
+            if(keyChars.indexOf(keyPressed) >= 0 && correct === false){
+                score++;
+                addBodyParts(score);
+                usedLetters.push(keyPressed);
+                if(score === 6){
+                    showEndScreen('LOST', hiddenWords);
+                    document.removeEventListener('keydown', handlerFunction);
+                }
+            }};
+        console.log(score, numCorrect, hiddenLetters.length)
+    }
+    document.removeEventListener('keydown', handlerFunction);
+    document.addEventListener('keydown', handlerFunction);
 
 }
 
 $(document).ready(()=>{
-    generateGame();
+    createStartPage();
 
 })
