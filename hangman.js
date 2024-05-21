@@ -1,5 +1,5 @@
 const keyChars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-const wordsArray = ['TWILIGHT', 'HANGMAN', 'BRIDGERTON', 'ECLIPSE', 'NEW MOON', 'HOMOSEXUAL']
+const wordsArray = ['TWILIGHT', 'ECLIPSE', 'NEW MOON', 'EDWARD CULLEN', 'FORKS WASHINGTON', 'VAMPIRE', 'JACOB BLACK', 'ISABELLA SWAN', 'BREAKING DAWN', 'CARLISLE', 'ROSALIE', 'JASPER', 'ALICE', 'EMMETT', 'KRISTEN STEWART', 'ROBERT PATTINSON', 'TAYLOR LAUTNER', 'CHARLIE SWAN', 'STEPHENIE MEYER', 'BASEBALL', 'VOLTURI']
 
 function createNewGameButton(){
     let button = $(`<button id="new-game-button">New Game</button>`)
@@ -130,7 +130,7 @@ function showEndScreen(wl, hiddenWord){
     clearPage();
     let textDiv = $(`<div class="main-screen-text col2"></div>`)
     let text;
-    let word = `<p class="end-screen-answer">The answer was: ${hiddenWord}</p>`;
+    let word = $(`<p class="end-screen-answer">The answer was: ${hiddenWord}</p>`);
     let button = createNewGameButton();
 
     if(wl === 'LOST'){
@@ -164,7 +164,8 @@ function generateGame(){
     let numCorrect = 0;
     drawHangman();
     let randomNum = Math.floor(Math.random() * wordsArray.length);
-    let hiddenWords = wordsArray[randomNum].split(' ');
+    let answer = wordsArray[randomNum];
+    let hiddenWords = answer.split(' ');
     console.log("new word: " + hiddenWords)
 
     populateHiddenWords(hiddenWords);
@@ -189,7 +190,7 @@ function generateGame(){
                     numCorrect++;
                     usedLetters.push(keyPressed);
                     if(numCorrect === hiddenLetters.length){
-                        showEndScreen('WON', hiddenWords);
+                        showEndScreen('WON', answer);
                         document.removeEventListener('keydown', handlerFunction);
                     };
                 }
@@ -199,7 +200,7 @@ function generateGame(){
                 addBodyParts(score);
                 usedLetters.push(keyPressed);
                 if(score === 6){
-                    showEndScreen('LOST', hiddenWords);
+                    showEndScreen('LOST', answer);
                     document.removeEventListener('keydown', handlerFunction);
                 }
             }};
