@@ -12,8 +12,13 @@ function clearPage(){
 
     mainContent.forEach((element)=>{
         element.remove();
+        
     });
 
+}
+
+function updateDisplay(event){
+    console.log(`X: ${event.pageX}, Y: ${event.pageY}`)
 }
 
 function createStartPage(){
@@ -51,7 +56,18 @@ function drawHangman(){
     c.stroke();
 }
 
-function addBodyParts(score){
+function drawSadFace(){
+    const canvas = document.getElementById('hangmanCanvas');
+    const c = canvas.getContext('2d');
+
+    c.strokeRect(60, 100, 3, 3);
+    c.strokeRect(77, 100, 3, 3);
+    c.beginPath()
+    c.arc(70, 130, 15, 0, Math.PI, true)
+    c.stroke();
+}
+
+function drawBodyParts(score){
     let canvas = document.getElementById("hangmanCanvas");
     let c = canvas.getContext('2d');
     
@@ -90,6 +106,7 @@ function addBodyParts(score){
             c.moveTo(70, 150);
             c.lineTo(50, 180);
             c.stroke();
+            drawSadFace();
             break;
         default:
             break
@@ -197,7 +214,7 @@ function generateGame(){
             });
             if(keyChars.indexOf(keyPressed) >= 0 && correct === false){
                 score++;
-                addBodyParts(score);
+                drawBodyParts(score);
                 usedLetters.push(keyPressed);
                 if(score === 6){
                     showEndScreen('LOST', answer);
@@ -213,5 +230,7 @@ function generateGame(){
 
 $(document).ready(()=>{
     createStartPage();
-
+    document.getElementById("hangmanCanvas").addEventListener("mousemove", updateDisplay, false);
+    document.getElementById("hangmanCanvas").addEventListener("mouseenter", updateDisplay, false);
+    document.getElementById("hangmanCanvas").addEventListener("mouseleave", updateDisplay, false);   
 })

@@ -6,7 +6,6 @@ NEED TO DO:
 
     MAKE KEYS CLICKABLE
 
-    HANGMAN FACIAL
 
 
 DONE:
@@ -15,3 +14,4 @@ DONE:
     Need new game button.
     Need "You Won!" screen.
     REPEAT BUTTON CLICKS SHOULD NOT ADD TO SCORE
+    HANGMAN FACIAL Expressions 
