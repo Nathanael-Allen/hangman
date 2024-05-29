@@ -1,5 +1,8 @@
 NEED TO DO:
+    TURN INTO EXPRESS/NODE PROJECT
 
+    FIX styling / Make mobile friendly / responsive
+    
     ADD HOME SCREEN:
         New game button
         Catagory picker drop down menu

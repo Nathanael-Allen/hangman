@@ -1,4 +1,4 @@
-const keyChars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+const keyChars = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M'];
 const wordsArray = ['TWILIGHT', 'ECLIPSE', 'NEW MOON', 'EDWARD CULLEN', 'FORKS WASHINGTON', 'VAMPIRE', 'JACOB BLACK', 'ISABELLA SWAN', 'BREAKING DAWN', 'CARLISLE', 'ROSALIE', 'JASPER', 'ALICE', 'EMMETT', 'KRISTEN STEWART', 'ROBERT PATTINSON', 'TAYLOR LAUTNER', 'CHARLIE SWAN', 'STEPHENIE MEYER', 'BASEBALL', 'VOLTURI']
 
 function createNewGameButton(){
@@ -15,10 +15,6 @@ function clearPage(){
         
     });
 
-}
-
-function updateDisplay(event){
-    console.log(`X: ${event.pageX}, Y: ${event.pageY}`)
 }
 
 function createStartPage(){
@@ -229,8 +225,5 @@ function generateGame(){
 }
 
 $(document).ready(()=>{
-    createStartPage();
-    document.getElementById("hangmanCanvas").addEventListener("mousemove", updateDisplay, false);
-    document.getElementById("hangmanCanvas").addEventListener("mouseenter", updateDisplay, false);
-    document.getElementById("hangmanCanvas").addEventListener("mouseleave", updateDisplay, false);   
+    createStartPage(); 
 })
