@@ -1,4 +1,4 @@
-const keyChars = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M'];
+const keyChars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 const wordsArray = ['TWILIGHT', 'ECLIPSE', 'NEW MOON', 'EDWARD CULLEN', 'FORKS WASHINGTON', 'VAMPIRE', 'JACOB BLACK', 'ISABELLA SWAN', 'BREAKING DAWN', 'CARLISLE', 'ROSALIE', 'JASPER', 'ALICE', 'EMMETT', 'KRISTEN STEWART', 'ROBERT PATTINSON', 'TAYLOR LAUTNER', 'CHARLIE SWAN', 'STEPHENIE MEYER', 'BASEBALL', 'VOLTURI']
 
 function createNewGameButton(){
@@ -6,15 +6,19 @@ function createNewGameButton(){
     return button;
 }
 
+function removeAllCanvas(){
+    const canvases = $('#canvasDiv');
+    canvases.remove()
+}
+
 function clearPage(){
     $('.hidden-letter').remove();
+    $('#keyboardOuterDiv').remove();
     let mainContent = Array.from(document.getElementsByClassName('col2'));
 
     mainContent.forEach((element)=>{
         element.remove();
-        
     });
-
 }
 
 function createStartPage(){
@@ -26,7 +30,13 @@ function createStartPage(){
     </div>`);
     main.append(button)
     $('main').append(main);
-    $('#new-game-button').on('click', ()=>{
+    $(document).on('keydown', (e)=>{
+        if(e.key === 'Enter'){
+            clearPage();
+            generateGame();
+        }
+    })
+    button.on('click', ()=>{
         clearPage();
         generateGame();
     })
@@ -52,14 +62,23 @@ function drawHangman(){
     c.stroke();
 }
 
-function drawSadFace(){
+function drawFace(wl){
     const canvas = document.getElementById('hangmanCanvas');
     const c = canvas.getContext('2d');
+    let happySad;
+    let y;
+    if(wl === 0){
+        happySad = true;
+        y = 130;
+    }else{
+        happySad = false;
+        y = 118;
+    }
 
     c.strokeRect(60, 100, 3, 3);
     c.strokeRect(77, 100, 3, 3);
     c.beginPath()
-    c.arc(70, 130, 15, 0, Math.PI, true)
+    c.arc(70, y, 15, 0, Math.PI, happySad)
     c.stroke();
 }
 
@@ -102,7 +121,6 @@ function drawBodyParts(score){
             c.moveTo(70, 150);
             c.lineTo(50, 180);
             c.stroke();
-            drawSadFace();
             break;
         default:
             break
@@ -143,39 +161,51 @@ function showEndScreen(wl, hiddenWord){
     clearPage();
     let textDiv = $(`<div class="main-screen-text col2"></div>`)
     let text;
-    let word = $(`<p class="end-screen-answer">The answer was: ${hiddenWord}</p>`);
+    let word = $(`<p class="end-screen-answer col2">The answer was: ${hiddenWord}</p>`);
     let button = createNewGameButton();
+    function restart(){
+        $('#canvasDiv').remove();
+        drawHangman();
+        clearPage();
+        generateGame();
+    }
 
     if(wl === 'LOST'){
+        drawFace(0)
         text = $('<p>YOU</p><p>LOST</p>');
         textDiv.append(text, word, button);
     }else if(wl === 'WON'){
+        drawBodyParts(1);
+        drawFace(1)
         text = $('<p>YOU</p><p>WON</p>');
         textDiv.append(text, word, button);
     }
     $('main').append(textDiv);
-    $('#new-game-button').on('click', ()=>{
-        $('canvas').remove();
-        drawHangman();
-        clearPage();
-        generateGame();
+    $(document).on('keydown', (e)=>{
+        if(e.key === 'Enter'){restart()}
     })
+    button.on('click', restart);
 }
 
 function buildDivs(){
     let hiddenDiv = $(`<div class="col2" id="hidden-word-div"></div`)
-    let keyboardDiv = $(`<div class="col2" id="keyboard-div">`)
+    let keyboardOuterDiv = $(`<div id='keyboardOuterDiv'></div>`)
+    let keyboardDiv = $(`<div class="col2" id="keyboard-div"></div>`)
 
-    $('main').append(hiddenDiv, keyboardDiv);
+    keyboardOuterDiv.append(keyboardDiv);
+    $('main').append(hiddenDiv, keyboardOuterDiv);
 }
+
 function generateGame(){
+    $(document).off('keydown');
+    removeAllCanvas();
+    drawHangman();
     buildDivs();
     let usedLetters = [];
     let correct;
     let keyPressed;
     let score = 0;
     let numCorrect = 0;
-    drawHangman();
     let randomNum = Math.floor(Math.random() * wordsArray.length);
     let answer = wordsArray[randomNum];
     let hiddenWords = answer.split(' ');
